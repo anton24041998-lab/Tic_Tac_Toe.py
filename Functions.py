@@ -130,11 +130,16 @@ def format_player_line(name: str, wins: int, leader: str | None, width: int) -> 
 
 def print_score_table(p1_name: str, p2_name: str) -> None:
     """
-    Display a dynamic-width scoreboard for two players.
+    Display a dynamic scoreboard for two players, including wins and ties.
 
-    The table automatically adjusts its width based on the longest
-    content (player names, scores, and header), ensuring that the
-    layout remains aligned and does not break with long names.
+    The table automatically adjusts its width based on the longest content
+    (player names, scores, ties, and header), ensuring proper alignment
+    even with long player names.
+
+    The scoreboard includes:
+    - Wins for each player
+    - Leader indication (player with more wins)
+    - Number of ties between the two players
 
     Args:
         p1_name (str): Name of the first player.
@@ -148,8 +153,17 @@ def print_score_table(p1_name: str, p2_name: str) -> None:
 
     leader = p1_name if p1_wins > p2_wins else p2_name if p2_wins > p1_wins else None
 
-    # Build plain text (no colors)
     def build_text(name, wins):
+        """
+        Build formatted text for a player's score line.
+
+        Args:
+            name (str): Player name.
+            wins (int): Number of wins.
+
+        Returns:
+            str: Formatted score string.
+        """
         win_text = "win" if wins == 1 else "wins"
         text = f"{name} — {wins} {win_text}"
         if name == leader:
@@ -159,14 +173,25 @@ def print_score_table(p1_name: str, p2_name: str) -> None:
     p1_text = build_text(p1_name, p1_wins)
     p2_text = build_text(p2_name, p2_wins)
 
-    # Auto width calculation
+    # Generate tie key for this specific pair of players
+    if p1_name == "Computer" or p2_name == "Computer":
+        human = p1_name if p1_name != "Computer" else p2_name
+        tie_key = f"Tie_{human}_vs_Computer"
+    else:
+        players = sorted([p1_name, p2_name])
+        tie_key = f"Tie_{players[0]}_vs_{players[1]}"
+    ties = total_score.get(tie_key, 0)
+    ties_text = f"Ties — {ties}"
+
+    # Calculate table width dynamically
     content_width = max(
         len(p1_text),
         len(p2_text),
+        len(ties_text),
         len(" SCOREBOARD ")
     )
 
-    table_width = content_width + 2  # padding inside borders
+    table_width = content_width + 2
 
     # Draw table
     print(f"\n{Colors.CYAN}╔{'═' * table_width}╗{Colors.RESET}")
@@ -175,6 +200,9 @@ def print_score_table(p1_name: str, p2_name: str) -> None:
 
     print(format_player_line(p1_name, p1_wins, leader, table_width))
     print(format_player_line(p2_name, p2_wins, leader, table_width))
+
+    # Display ties
+    print(f"{Colors.YELLOW}║ {ties_text.ljust(table_width - 2)} ║{Colors.RESET}")
 
     print(f"{Colors.CYAN}╚{'═' * table_width}╝{Colors.RESET}")
 
@@ -639,12 +667,23 @@ def save_match(player1: str, player2: str, board: List[str], winner: str) -> Non
         "winner": winner
     })
 
-    # Save history immediately (IMPORTANT)
+    # Save history immediately
     save_history()
 
-    if winner != "Tie":
+    # Unique key for ties between specific players
+    if player1 == "Computer" or player2 == "Computer":
+        # Separate tie counter for each human vs computer
+        human = player1 if player1 != "Computer" else player2
+        tie_key = f"Tie_{human}_vs_Computer"
+    else:
+        players = sorted([player1, player2])
+        tie_key = f"Tie_{players[0]}_vs_{players[1]}"
+
+    if winner == "Tie":
+        total_score[tie_key] = total_score.get(tie_key, 0) + 1
+    else:
         total_score[winner] = total_score.get(winner, 0) + 1
-        save_score()
+    save_score()
 
 # ====================== GAME SESSION ======================
 def run_game_session(
