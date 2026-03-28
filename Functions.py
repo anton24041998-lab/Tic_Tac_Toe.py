@@ -596,9 +596,9 @@ def ask_play_again() -> bool:
             f"{Colors.CYAN}{random.choice(play_again_msgs)} (y/n): {Colors.RESET}"
         ).strip().lower()
 
-        if ans in ("y", "yes", "да", "д"):
+        if ans in ("y", "yes",):
             return True
-        if ans in ("n", "no", "нет", "н"):
+        if ans in ("n", "no", ):
             return False
 
         print(f"{Colors.ERROR}Please answer y or n.{Colors.RESET}")
