@@ -3,7 +3,6 @@ import json
 import os
 from typing import List, Dict, Optional
 class Colors:
-    """ANSI color codes for enhanced terminal output."""
     HEADER = "\033[95m"
     BLUE = "\033[94m"  # X symbol
     RED = "\033[91m"  # O symbol
