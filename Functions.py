@@ -35,6 +35,7 @@ class Colors:
 
 SAVE_FILE = "saved_game.json"
 SCORE_FILE = "score.json"
+HISTORY_FILE = "history.json"
 match_history: List[Dict] = []
 total_score: Dict[str, int] = {}
 
@@ -207,7 +208,6 @@ def print_score_table(p1_name: str, p2_name: str) -> None:
     print(f"{Colors.CYAN}╚{'═' * table_width}╝{Colors.RESET}")
 
 
-HISTORY_FILE = "history.json"
 
 def load_history() -> None:
     """
