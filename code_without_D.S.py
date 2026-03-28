@@ -2,7 +2,6 @@ import random
 import json
 import os
 from typing import List, Dict, Optional
-
 class Colors:
     """ANSI color codes for enhanced terminal output."""
     HEADER = "\033[95m"
@@ -15,51 +14,42 @@ class Colors:
     RESET = "\033[0m"
     ERROR = "\033[41m"  # Red background for errors
     GOLD = "\033[93m"
-
 SAVE_FILE = "saved_game.json"
 SCORE_FILE = "score.json"
 match_history: List[Dict] = []
 total_score: Dict[str, int] = {}
-
 resume_msgs = [
     "Maaan, you didn’t even start a game! Go play first 😎",
     "Hey, time traveler! No game to resume yet 🚀",
     "Oops! Nothing to resume… start a game first 🕹️"
 ]
-
 number_error_msgs = [
     "Oops! That’s not a number… try 1–9 😉",
     "Wrong input! Please enter a number from 1 to 9 🧐",
     "Focus, friend! Only numbers 1-9 are allowed"
 ]
-
 symbol_error_msgs = [
     "Please choose only X or O 😊",
     "That's not a valid symbol. Use X or O",
     "Only X and O are allowed, try again"
 ]
-
 cell_taken_msgs = [
     "Haha, that cell is already taken! Pick another 🏃‍♂️",
     "Someone beat you to it! Try a free spot 🏁",
     "Nope, that cell's busy 😎"
 ]
-
 victory_msgs = [
     "🎉 Whoa! Victory dance time!",
     "🏆 Champion! Bow down, mortal!"
 ]
-
 tie_msgs = [
     "🤝 It's a tie! Everyone gets a cookie!",
     "😅 Stalemate! Better luck next round!"
 ]
-
 play_again_msgs = [
     "Want to play another round?",
     "One more game?"
 ]
-
 def load_score() -> Dict[str, int]:
     if os.path.exists(SCORE_FILE):
         try:
